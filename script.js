@@ -11,106 +11,118 @@ const percentButton =
 document.querySelector('[data-percent]');
 const deleteButton =
 document.querySelector('[data-delete]');
+const decimalButton =
+document.querySelector('[data-decimal]');
 
-let currentOperand = '';
-let previousOperand = '';
-let currentOperator = null;
+let firstOperand ='';
+let secondOperand ='';
+let currentOperator ='';
+let shouldResetDisplay = false;
 
 numberButtons.forEach(button => {
-    button.addEventListener('click', () =>{
-        currentOperand += button.textContent;
-        updateDisplay();
-    });
+    button.addEventListener('click', () =>
+    appendNumber(button.dataset.number));
 });
 
-operatorButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        if(currentOperand === '') return;
-        if (previousOperand !== '') calculate();
-        currentOperator = button.textContent;
-        previousOperand = currentOperand;
-        currentOperand = '';
-    });
-});
+decimalButton.addEventListener('click',
+    appendDecimal);
 
-equalsButton.addEventListener('click', () => {
-    calculate();
-    updateDisplay();
-});
+    percentButton.addEventListener('click', 
+        convertPercent);
 
-clearButton.addEventListener('click', () => {
-    currentOperand = '';
-    previousOperand = '';
-    currentOperator = null;
-    updateDisplay();
-});
+        operatorButtons.forEach(button => {
+            button.addEventListener('click', () =>
+            setOperator(button.dataset.operator));
+        });
 
-percentButton.addEventListener('click', () => {
-    if (currentOperand !=='') {
-        currentOperand = (parseFloat(currentOperand) /
-    100).toString();
-    updateDisplay();
-    }
-});
+        equalsButton.addEventListener('click', () => {
+            if (currentOperator ==='' || shouldResetDisplay)
+                return;
+            evaluate();
+            currentOperator ='';
+        });
 
-deleteButton.addEventListener('click', () => {
-    deleteLast();
-});
+        clearButton.addEventListener('click', clear);
+        deleteButton.addEventListener('click', deleteLast);
 
+        function appendNumber(number) {
+            if (display.textContent === '0' ||
+                shouldResetDisplay) {
+                    display.textContent = number;
+                    shouldResetDisplay = false;
+                } else {
+                    display.textContent += number;
+                }
+        }
 
-function deleteLast() {
-    currentOperand = currentOperand.slice(0, -1);
-    updateDisplay();
-}
+        function appendDecimal() {
+            if (shouldResetDisplay) {
+                display.textContent = '0.';
+                shouldResetDisplay = false;
+                return;
+            }
+            if (!display.textContent.includes('.')) {
+                display.textContent +='.';
+            }
+        }
 
-function calculate() {
-    let result;
-    const prev = parseFloat(previousOperand); 
-    const curr = parseFloat(currentOperand);
-    if (isNaN(prev) || isNaN(curr)) return;
+        function convertPercent() {
+            let value = parseFloat(display.textContent);
+            if (isNaN(value)) return;
+            value = value/100;
+            display.textContent =
+            value.toString().substring(0, 12);
+            shouldResetDisplay = true;
+        }
 
-    switch (currentOperator) {
-        case '+':
-            result = prev + curr;
-            break;
-        case '-':
-            result = prev - curr;
-            break;
-        case '*':
-            result = prev * curr;
-            break;
-        case '/':
-            result = prev / curr;
-            break;
-        default:
-            return;
-    }
+        function setOperator(operator) {
+            if (currentOperator !=='') evaluate();
+            firstOperand = display.textContent;
+            currentOperator = operator;
+            shouldResetDisplay = true;
+        }
 
-    currentOperand = result.toString();
-    previousOperand = '';
-    currentOperator = null;
-}
+        function evaluate () {
+            secondOperand = display.textContent;
+            const a = parseFloat(firstOperand);
+            const b = parseFloat(secondOperand);
+            let result;
 
-document.addEventListener('keydown', (e) => {
-    if (isNaN(e.key) || e.key === '.') {
-        appendNumber(e.key);
-    } else if (['+', '-', '*', '/'].includes(e.key)){
-        chooseOperator(e.key);
-    } else if (e.key === 'Enter' || e.key === '=') {
-        calculate();
-        updateDisplay();
-    } else if (e.key === 'Backspace') {
-        deleteLast();
-    } else if (e.key === 'Escape') {
-        currentOperand = '';
-        previousOperand = '';
-        currentOperator = null;
-        updateDisplay();
-    } else if (e.key === '%') {
-        percentButton.click();
-    }
-});
+            switch (currentOperator) {
+                case '+':
+                    result = a + b;
+                    break;
+                case '-':
+                    result = a - b;
+                    break;
+                case '*':
+                    result = a * b;
+                    break;
+                case '/':
+                    result = b === 0 ? 'Error' : a / b;
+                    break;
+            }
 
-function updateDisplay() {
-    display.textContent = currentOperand || '0';
-}
+        display.textContent =
+        result.toString().substring(0, 12);
+        firstOperand = result;
+        shouldResetDisplay = true;
+        }
+
+        function clear() {
+            display.textContent = '0';
+            firstOperand = '';
+            secondOperand = '';
+            currentOperator = '';
+            shouldResetDisplay = false;
+        }
+
+        function deleteLast() {
+            if (shouldResetDisplay ||
+                display.textContent.length === 1) {
+                    display.textContent = '0';
+                } else {
+                    display.textContent =
+                    display.textContent.slice(0, -1);
+                }
+        }

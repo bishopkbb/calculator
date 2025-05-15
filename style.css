@@ -1,6 +1,10 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f0f2f5;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,62 +13,84 @@ body {
 }
 
 .calculator {
-    background-color: #222;
+    background-color: #ffffff;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     width: 320px;
 }
 
 #display {
-    background-color: #000;
-    color: #0f0;
-    font-size: 2rem;
-    padding: 15px;
+    background-color: #1e1e2f;
+    color: #28a745;
+    font-size: 2.5rem;
+    padding: 20px;
     text-align: right;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    min-height: 40px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    min-height: 60px;
+    overflow-x: auto;
 }
 
 .buttons {
     display: grid;
     grid-template-columns: repeat(4,1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 button {
     padding: 20px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
     background-color: #444;
     color: white;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background 0.2s ease;
+    font-weight: bold;
 }
 
 button:hover {
     background-color: #666;
 }
 
-button.operator {
-    background-color: #ffa733;
+button[data-operator],
+button[data-percent] {
+    background-color: #ffe5b4;
+    color: #a16700;
 }
 
-button.equal {
-    background-color: #28a745;
+button[data-operator]:hover,
+button[data-percent]:hover {
+    background: #ffd494;
+}
+
+button[data-equals] {
+    background-color: #6c63ff;
+    color: white;
     grid-column: span 2;
 }
 
-button.equal:hover {
-    background-color: #34d058;
+button[data-equals]:hover {
+    background-color: #5851db;
 }
 
-.clear-btn {
-    background-color: #dc3545;
+button[data-clear], 
+button[data-delete] {
+    background-color: #ffb3b3;
+    color: #800000;
 }
 
-.clear-btn:hover {
-    background-color: #e55353;
+button[data-clear]:hover,
+button[data-delete]:hover {
+    background-color: #ff8a8a;
+}
+
+button[data-decimal] {
+    background: #d0e8ff;
+    color: #004080;
+}
+
+button[data-decimal]:hover {
+    background: #a5d4ff;
 }
